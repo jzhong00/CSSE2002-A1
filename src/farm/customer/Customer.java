@@ -12,8 +12,7 @@ public class Customer {
     public Customer(String name, int phoneNumber, String address) {
         if (name == null || name.isEmpty() || address == null || address.isEmpty()) {
             throw new IllegalArgumentException("Name and address cannot be empty");
-        }
-        else if (phoneNumber < 0) {
+        } else if (phoneNumber < 0) {
             throw new IllegalArgumentException("Phone number cannot be negative");
         }
         this.name = name.trim();
@@ -60,7 +59,7 @@ public class Customer {
     }
 
     @Override public String toString() {
-        return "Name: " + name + " | Phone: " + phoneNumber + " | Address: " + address;
+        return "Name: " + name + " | Phone Number: " + phoneNumber + " | Address: " + address;
     }
 
     @Override public boolean equals(Object obj) {

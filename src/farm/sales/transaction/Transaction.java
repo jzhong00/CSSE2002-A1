@@ -58,7 +58,7 @@ public class Transaction {
                 + "Status: " + status + ", Associated Products: "+ productDescriptions + "}";
     }
 
-    public String getReciept() {
+    public String getReceipt() {
         List<String> headings = new ArrayList<>();
         String total = convertPrice(this.getTotal());
 
@@ -77,7 +77,7 @@ public class Transaction {
         return ReceiptPrinter.createReceipt(headings, entries, total, this.customer.getName());
     }
 
-    private String convertPrice(int price) {
+    protected String convertPrice(int price) {
         return "$" + String.format("%.2f", price / 100.0);
     }
 

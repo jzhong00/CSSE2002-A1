@@ -28,30 +28,31 @@ public class ReceiptPrinter {
      * @return the placeholder receipt to display. 
      */
     public static String createActiveReceipt() {
-        return "-".repeat(LINE_LENGTH) + "\n" + "Transaction still active; cannot generate receipt.\n"
+        return "-".repeat(LINE_LENGTH) + "\n"
+                + "Transaction still active; cannot generate receipt.\n"
                 + "-".repeat(LINE_LENGTH) + "\n";
     }
 
     /**
-     * Creates a nicely formatted String representation of a finalised transaction by styling it 
+     * Creates a nicely formatted String representation of a finalised transaction by styling it
      * as a paper receipt, used for displaying information about this transaction to the CLI.
      * <p>
      * The method works by accepting provided string components and placing them in the appropriate
      * locations to create the final receipt. Specifically, these components should be provided as follows:
      * <ol>
-     *     <li><strong>Headings:</strong> Provide the headings to be displayed at the top of the 'purchases' section 
-     *     of the receipt, in the order (from left to right) in which they should appear on the receipt. For example, 
+     *     <li><strong>Headings:</strong> Provide the headings to be displayed at the top of the 'purchases' section
+     *     of the receipt, in the order (from left to right) in which they should appear on the receipt. For example,
      *     if a headings list is provided beginning with "Name", then the leftmost heading of the products section
      *     will be "Name". All headings will always appear on the same line.</li>
-     *     <li><strong>Entries:</strong> Provide a list of the entries to be displayed in the body of the 'purchases' section, 
-     *     beneath the provided headings. Each entry should be a list of strings, with each item in the list 
+     *     <li><strong>Entries:</strong> Provide a list of the entries to be displayed in the body of the 'purchases' section,
+     *     beneath the provided headings. Each entry should be a list of strings, with each item in the list
      *     being the piece of information corresponding to the heading at the same index.
      *     <br>
-     *     For example, if the first heading in the headings list is "Name", and the first list in the entries list 
+     *     For example, if the first heading in the headings list is "Name", and the first list in the entries list
      *     is ["Milk", "$4.40"], then "Milk" is the piece of information corresponding to the "Name" heading in the first entry.
      *     <br>
-     *     Each entry occupies its own line, unless that entry contains more items than there are headings; in this case, 
-     *     the entry 'wraps around' to the next line. For example, if there are two headings and some entry contains three items, 
+     *     Each entry occupies its own line, unless that entry contains more items than there are headings; in this case,
+     *     the entry 'wraps around' to the next line. For example, if there are two headings and some entry contains three items,
      *     then the third string in that entry would instead be shown at the start of the <em>next</em> line.
      *     </li>
      *     <li><strong>Total:</strong> The string to be displayed as the total cost of the whole transaction.</li>
@@ -61,7 +62,7 @@ public class ReceiptPrinter {
      * All supplied strings must already be in the format in which they are to be displayed.
      * @param headings the headings to be shown at the top of all purchases listed on the receipt
      * @param entries the entries to be displayed in the purchases section of the receipt. Each
-     *                entry is a list of strings that will be displayed in the same column as the 
+     *                entry is a list of strings that will be displayed in the same column as the
      *                headings at the corresponding index of the headings list.
      * @param total the total price reported on the receipt.
      * @param customerName the name of the customer reported on the receipt.
@@ -71,37 +72,37 @@ public class ReceiptPrinter {
                                        String total, String customerName) {
         StringBuilder sb = new StringBuilder();
         buildReceiptHeader(sb);
-        
+
         List<Integer> colLengths = getMaxLenPerCol(headings, entries);
         int spacing = getSpacingBetweenEntries(colLengths);
         buildPurchasesSectionHeadings(sb, headings, colLengths, spacing);
         buildPurchasesSectionEntries(sb, entries, headings.size(), colLengths, spacing);
-        
+
         buildTotalsSummary(sb, total);
         buildThankYouMessage(sb, customerName);
         return sb.toString();
     }
-    
+
     /**
-     * Creates a nicely formatted String representation of a finalised transaction by styling it 
+     * Creates a nicely formatted String representation of a finalised transaction by styling it
      * as a paper receipt, used for displaying information about this transaction to the CLI.
      * <p>
      * The method works by accepting provided string components and placing them in the appropriate
      * locations to create the final receipt. Specifically, these components should be provided as follows:
      * <ol>
-     *     <li><strong>Headings:</strong> Provide the headings to be displayed at the top of the 'purchases' section 
-     *     of the receipt, in the order (from left to right) in which they should appear on the receipt. For example, 
+     *     <li><strong>Headings:</strong> Provide the headings to be displayed at the top of the 'purchases' section
+     *     of the receipt, in the order (from left to right) in which they should appear on the receipt. For example,
      *     if a headings list is provided beginning with "Name", then the leftmost heading of the products section
      *     will be "Name". All headings will always appear on the same line.</li>
-     *     <li><strong>Entries:</strong> Provide a list of the entries to be displayed in the body of the 'purchases' section, 
-     *     beneath the provided headings. Each entry should be a list of strings, with each item in the list 
+     *     <li><strong>Entries:</strong> Provide a list of the entries to be displayed in the body of the 'purchases' section,
+     *     beneath the provided headings. Each entry should be a list of strings, with each item in the list
      *     being the piece of information corresponding to the heading at the same index.
      *     <br>
-     *     For example, if the first heading in the headings list is "Name", and the first list in the entries list 
+     *     For example, if the first heading in the headings list is "Name", and the first list in the entries list
      *     is ["Milk", "$4.40"], then "Milk" is the piece of information corresponding to the "Name" heading in the first entry.
      *     <br>
-     *     Each entry occupies its own line, unless that entry contains more items than there are headings; in this case, 
-     *     the entry 'wraps around' to the next line. For example, if there are two headings and some entry contains three items, 
+     *     Each entry occupies its own line, unless that entry contains more items than there are headings; in this case,
+     *     the entry 'wraps around' to the next line. For example, if there are two headings and some entry contains three items,
      *     then the third string in that entry would instead be shown at the start of the <em>next</em> line.
      *     </li>
      *     <li><strong>Total:</strong> The string to be displayed as the total cost of the whole transaction.</li>
@@ -112,11 +113,11 @@ public class ReceiptPrinter {
      * All supplied strings must already be in the format in which they are to be displayed.
      * @param headings the headings to be shown at the top of all purchases listed on the receipt
      * @param entries the entries to be displayed in the purchases section of the receipt. Each
-     *                entry is a list of strings that will be displayed in the same column as the 
+     *                entry is a list of strings that will be displayed in the same column as the
      *                headings at the corresponding index of the headings list.
      * @param total the total price reported on the receipt.
      * @param customerName the name of the customer reported on the receipt.
-     * @param totalSaved the total savings reported on the receipt.                    
+     * @param totalSaved the total savings reported on the receipt.
      * @return the styled receipt representation of the provided transaction information
      */
     public static String createReceipt(List<String> headings, List<List<String>> entries,
@@ -128,36 +129,35 @@ public class ReceiptPrinter {
         int spacing = getSpacingBetweenEntries(colLengths);
         buildPurchasesSectionHeadings(sb, headings, colLengths, spacing);
         buildPurchasesSectionEntries(sb, entries, headings.size(), colLengths, spacing);
-        
+
         buildTotalsSummary(sb, total);
         buildSavingsSummary(sb, totalSaved);
         buildThankYouMessage(sb, customerName);
         return sb.toString();
     }
-    
+
     private static void buildReceiptHeader(StringBuilder sb) {
         sb.append("=".repeat(LINE_LENGTH)).append("\n");
         sb.append(ShopFront.centreStringComponent(FARM_NAME, LINE_LENGTH));
         sb.append(ShopFront.centreStringComponent(FARM_ADDRESS, LINE_LENGTH)).append("\n");
         sb.append(ShopFront.centreStringComponent(FARM_LOGO, LINE_LENGTH)).append("\n");
-        
+
     }
-    
+
     private static void buildPurchasesSectionHeadings(StringBuilder sb, List<String> headings, List<Integer> colLengths, int spacing) {
         sb.append("=".repeat(LINE_LENGTH)).append("\n");
         distribute(sb, colLengths, spacing, headings);
         sb.append("-".repeat(LINE_LENGTH)).append("\n");
     }
-    
+
     private static void buildPurchasesSectionEntries(StringBuilder sb, List<List<String>> entries, int numHeadings, List<Integer> colLengths, int spacing) {
-        
+
         for (List<String> entry : entries) {
             List<List<String>> lines = new ArrayList<>();
             if (entry.size() <= numHeadings) {
                 lines.add(entry);
             } else {
                 int partitions = (int) Math.ceil((double) entry.size() / numHeadings);
-                System.out.println(partitions);
                 for (int i = 0; i < partitions; i++) {
                     lines.add(entry.subList(i * numHeadings, Math.min(i * numHeadings
                             + numHeadings, entry.size())));

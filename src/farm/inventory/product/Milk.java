@@ -1,6 +1,7 @@
-package farm.inventory.product.data;
+package farm.inventory.product;
 
-import farm.inventory.product.Product;
+import farm.inventory.product.data.Barcode;
+import farm.inventory.product.data.Quality;
 
 public class Milk extends Product {
     private final String name;
