@@ -4,6 +4,7 @@ import java.util.List;
 
 import farm.inventory.product.Egg;
 import farm.inventory.product.Milk;
+import farm.inventory.product.data.Barcode;
 import farm.inventory.product.data.Quality;
 
 //Stage 0
@@ -11,8 +12,9 @@ import farm.core.DuplicateCustomerException;
 import farm.customer.*;
 
 // Stage 1
-//import farm.sales.transaction.SpecialSaleTransaction;
-//import farm.sales.transaction.Transaction;
+import farm.sales.transaction.CategorisedTransaction;
+import farm.sales.transaction.SpecialSaleTransaction;
+import farm.sales.transaction.Transaction;
 
 // Stage 2 + Stage 3
 //import farm.inventory.*;
@@ -41,29 +43,39 @@ public class Main {
             addressBook.addCustomer(new Customer(name, 1234, "1st Street"));
         }
         System.out.println(addressBook.getAllRecords());
-//
-//        //// -- Stage 1: Products + Transactions
-//        System.out.println("\n");
-//        System.out.println(new Milk(Quality.IRIDIUM));
-//
-//        Transaction transaction = new Transaction(customer);
-//        for (int i = 0; i < 3; i++) {
-//            transaction.getAssociatedCustomer().getCart().addProduct(new Milk());
-//        }
-//        transaction.getAssociatedCustomer().getCart().addProduct(new Egg());
-//        transaction.getAssociatedCustomer().getCart().addProduct(new Milk());
-//        transaction.finalise();
-//        System.out.println("\n");
-//        System.out.println(transaction.getReceipt());
-//        transaction = new SpecialSaleTransaction(customer);
-//        for (int i = 0; i < 3; i++) {
-//            transaction.getAssociatedCustomer().getCart().addProduct(new Milk());
-//        }
-//        transaction.getAssociatedCustomer().getCart().addProduct(new Egg());
-//        transaction.getAssociatedCustomer().getCart().addProduct(new Milk());
-//        transaction.finalise();
-//        System.out.println("\n".repeat(3));
-//        System.out.println(transaction.getReceipt());
+
+        //// -- Stage 1: Products + Transactions
+        Milk milk = new Milk();
+        System.out.println(milk);
+        System.out.println("\n");
+        System.out.println(new Milk(Quality.IRIDIUM));
+
+        Transaction transaction = new Transaction(customer);
+        for (int i = 0; i < 3; i++) {
+            transaction.getAssociatedCustomer().getCart().addProduct(new Milk());
+        }
+        transaction.getAssociatedCustomer().getCart().addProduct(new Egg());
+        transaction.getAssociatedCustomer().getCart().addProduct(new Milk());
+        transaction.finalise();
+        System.out.println("\n");
+        System.out.println(transaction.getReceipt());
+        transaction = new SpecialSaleTransaction(customer);
+        for (int i = 0; i < 3; i++) {
+            transaction.getAssociatedCustomer().getCart().addProduct(new Milk());
+        }
+        transaction.getAssociatedCustomer().getCart().addProduct(new Egg());
+        transaction.getAssociatedCustomer().getCart().addProduct(new Milk());
+        transaction.finalise();
+        System.out.println("\n".repeat(3));
+        System.out.println(transaction.getReceipt());
+
+        CategorisedTransaction transaction2 = new CategorisedTransaction(customer);
+        for (int i = 0; i < 3; i++) {
+            transaction2.getAssociatedCustomer().getCart().addProduct(new Milk());
+        }
+        transaction2.getAssociatedCustomer().getCart().addProduct(new Egg());
+        System.out.println(transaction2.getPurchaseQuantity(Barcode.EGG));
+
 
         // -- Stage 2 + 3: Combining them together
 

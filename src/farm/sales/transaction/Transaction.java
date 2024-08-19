@@ -23,6 +23,7 @@ public class Transaction {
     }
 
     public List<Product> getPurchases() {
+        System.out.println(this.purchases);
         return new ArrayList<>(this.purchases);
     }
 
@@ -73,6 +74,7 @@ public class Transaction {
             List<String> entry = new ArrayList<>();
             entry.add(product.getDisplayName());
             entry.add(convertPrice(product.getBasePrice()));
+            entries.add(entry);
         }
         return ReceiptPrinter.createReceipt(headings, entries, total, this.customer.getName());
     }

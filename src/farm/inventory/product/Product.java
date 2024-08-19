@@ -6,9 +6,9 @@ import farm.inventory.product.data.Quality;
 import java.util.Objects;
 
 public abstract class Product {
-    private Barcode barcode;
-    private Quality quality;
-    private int price;
+    protected Barcode barcode;
+    protected Quality quality;
+    protected int price;
 
     public Barcode getBarcode() {
         return this.barcode;

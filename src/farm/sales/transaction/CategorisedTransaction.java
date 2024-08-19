@@ -36,7 +36,8 @@ public class CategorisedTransaction extends Transaction {
     }
 
     public int getPurchaseQuantity(Barcode type) {
-        List<Product> purchases = getPurchases();
+        List<Product> purchases = this.getPurchases();
+        System.out.println(purchases);
         int count = 0;
         for (Product purchase : purchases) {
             if (purchase.getBarcode().equals(type)) {

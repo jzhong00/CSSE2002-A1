@@ -5,10 +5,7 @@ import farm.inventory.product.data.Quality;
 
 public class Jam extends Product {
     private final String name;
-    private final Barcode barcode;
-    private final Quality quality;
-    private final int price;
-    
+
     public Jam() {
         this.barcode = Barcode.JAM;
         this.price = Barcode.JAM.getBasePrice();
