@@ -69,13 +69,6 @@ public class Main {
         System.out.println("\n".repeat(3));
         System.out.println(transaction.getReceipt());
 
-        CategorisedTransaction transaction2 = new CategorisedTransaction(customer);
-        for (int i = 0; i < 3; i++) {
-            transaction2.getAssociatedCustomer().getCart().addProduct(new Milk());
-        }
-        transaction2.getAssociatedCustomer().getCart().addProduct(new Egg());
-        System.out.println(transaction2.getPurchaseQuantity(Barcode.EGG));
-
 
         // -- Stage 2 + 3: Combining them together
 

@@ -23,13 +23,16 @@ public class Transaction {
     }
 
     public List<Product> getPurchases() {
-        System.out.println(this.purchases);
+        if (!this.finalised) {
+            return getAssociatedCustomer().getCart().getContents();
+        }
         return new ArrayList<>(this.purchases);
     }
 
     public int getTotal() {
+        List<Product> purchases = getPurchases();
         int total = 0;
-        for (Product product : this.purchases) {
+        for (Product product : purchases) {
             total += product.getBasePrice();
         }
         return total;
@@ -52,7 +55,7 @@ public class Transaction {
         }
         List<String> productDescriptions = new ArrayList<>();
 
-        for (Product product : this.customer.getCart().getContents()) {
+        for (Product product : this.getPurchases()) {
             productDescriptions.add(product.toString());
         }
         return "Transaction {Customer: " + customer.toString().replaceFirst("Name: ", "")
