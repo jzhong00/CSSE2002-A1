@@ -1,6 +1,8 @@
 package farm.core;
 
 import farm.customer.Customer;
+import farm.inventory.BasicInventory;
+import farm.inventory.FancyInventory;
 import farm.inventory.product.Product;
 import farm.inventory.product.data.Barcode;
 import farm.inventory.product.data.Quality;
@@ -82,7 +84,29 @@ public class FarmManager {
      * If the product is added successfully display the product add success message.
      * @param productName the name of the product to add to the farm.
      */
-    protected void addToInventory(String productName) { }
+    protected void addToInventory(String productName) {
+
+        // Ensure a valid product was specified.
+        if (!checkProductName(productName)) {
+            shop.displayProductAddFailed("Invalid product name: " + productName);
+            return;
+        }
+
+        try {
+            // Add the product to the inventory with regular quality.
+            Barcode barcode = getBarcode(productName);
+            farm.addToCart(barcode, 1);
+            // If the product is added successfully.
+            shop.displayProductAddSuccess();
+        } catch (Exception e) {
+            if (e instanceof FailedTransactionException) {
+                shop.displayProductAddFailed(e.getMessage().replace("purchase", "supply"));
+            } else {
+                // Handle any exceptions that occur during the addition process.
+                shop.displayProductAddFailed(e.getMessage());
+            }
+        }
+    }
 
 
     /**
@@ -92,13 +116,87 @@ public class FarmManager {
      * @param productName the name of the product to add to the farm.
      * @param quantity the amount of the product to add.
      */
-    protected void addToInventory(String productName, int quantity) { }
+    protected void addToInventory(String productName, int quantity) { // Define valid product names
+
+        // Ensure a valid product was specified.
+        if (!checkProductName(productName)) {
+            shop.displayProductAddFailed("Invalid product name: " + productName);
+            return;
+        }
+
+        try {
+            // Add the specified quantity of the product to cart.
+            Barcode barcode = getBarcode(productName);
+            farm.addToCart(barcode, quantity);
+            // If the product is added successfully
+            shop.displayProductAddSuccess();
+        } catch (Exception e) {
+            if (e instanceof FailedTransactionException) {
+                shop.displayProductAddFailed(e.getMessage().replace("purchase", "supply"));
+            } else {
+                // Handle any exceptions that occur during the addition process.
+                shop.displayProductAddFailed(e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Helper method to check if the product is valid based on the inputted name.
+     * @param productName The name of the product
+     * @return Whether the product exists or not.
+     */
+    private Boolean checkProductName(String productName) {
+        List<String> validProducts = List.of("egg", "milk", "jam", "wool");
+        // Check if the product name is valid
+        return !validProducts.contains(productName);
+    }
+
+    /**
+     * A method to get the barcode for a product based on its name.
+     * @param productName The product's name
+     * @return The barcode for the product
+     */
+    private Barcode getBarcode(String productName) {
+        return switch (productName.toLowerCase()) {
+            case "egg" -> Barcode.EGG;
+            case "milk" -> Barcode.MILK;
+            case "jam" -> Barcode.JAM;
+            case "wool" -> Barcode.WOOL;
+            default -> null;
+        };
+    }
+
 
 
     /**
      * Prompt the user to create a new customer and then save it to the farms address book for later usage.
      */
-    protected void createCustomer() { }
+    protected void createCustomer() {
+        // Prompt for name and address
+        String name = shop.promptForCustomerName();
+        String address = shop.promptForCustomerAddress();
+        int phoneNumber;
+
+        // Ensure the phone number is numerical.
+        try {
+            phoneNumber = shop.promptForCustomerNumber();
+        } catch (NumberFormatException e) {
+            // Display a message if the phone number was not valid.
+            shop.displayInvalidPhoneNumber();
+            return;
+        }
+
+        // Create a new customer based on the provided details.
+        Customer customer = new Customer(name, phoneNumber, address);
+
+        // Save the customer into the address book, if they do not already exist.
+        try {
+            farm.saveCustomer(customer);
+        } catch (DuplicateCustomerException e) {
+            shop.displayDuplicateCustomer();
+        }
+
+    }
 
     /**
      * Start a new transaction for the transaction manager to manage.
@@ -106,9 +204,65 @@ public class FarmManager {
      * being passed in.
      * @param transactionType the type of transaction to make
      */
-    protected void initiateTransaction(String transactionType) { }
+    protected void initiateTransaction(String transactionType) {
+        // Get the customer's name and phone number.
+        String name = shop.promptForCustomerName();
+        int phoneNumber;
+        try {
+            phoneNumber = shop.promptForCustomerNumber();
+        } catch (NumberFormatException e) {
+            shop.displayInvalidPhoneNumber();
+            return;
+        }
 
+        // Retrieve the customer.
+        Customer customer;
+        try {
+            customer = farm.getCustomer(name, phoneNumber);
+        } catch (CustomerNotFoundException e) {
+            shop.displayCustomerNotFound();
+            return;
+        }
 
+        // Create the specified transaction type.
+        Transaction transaction = createTransaction(transactionType, customer);
+
+        shop.displayTransactionStart();
+
+        // Set this transaction as currently ongoing.
+        try {
+            farm.getTransactionManager().setOngoingTransaction(transaction);
+        } catch (FailedTransactionException e) {
+            shop.displayFailedToCreateTransaction();
+        }
+    }
+
+    /**
+     * A method that creates specific type of transaction based on a provided string.
+     * @param transactionType The CLI flag to denote the type of transaction.
+     * @param customer The customer to create the transaction for.
+     * @return A transaction, either SpecialSaleTransaction, CategorisedTransaction or Transaction.
+     */
+    private Transaction createTransaction(String transactionType, Customer customer) {
+        switch (transactionType) {
+            // Special Sale Transaction.
+            case "-s":
+            case "-specialsale":
+                Map<Barcode, Integer> discounts = getDiscounts();
+                if (!discounts.isEmpty()) {
+                    return new SpecialSaleTransaction(customer, discounts);
+                } else {
+                    return new SpecialSaleTransaction(customer);
+                }
+            // Categorised Transaction.
+            case "-c":
+            case "-categorised":
+                return new CategorisedTransaction(customer);
+            // Base Transaction.
+            default:
+                return new Transaction(customer);
+        }
+    }
 
     // EDIT ABOVE THIS LINE
     // ---------------------------------------------------------------------------------------------

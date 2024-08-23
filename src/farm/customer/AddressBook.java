@@ -37,7 +37,7 @@ public class AddressBook {
 
     public Customer getCustomer(String name, int phoneNumber) throws CustomerNotFoundException {
         for (Customer customer : this.customers) {
-            if (customer.getName() == name && customer.getPhoneNumber() == phoneNumber) {
+            if (customer.getName().equals(name) && customer.getPhoneNumber() == phoneNumber) {
                 return customer;
             }
         }

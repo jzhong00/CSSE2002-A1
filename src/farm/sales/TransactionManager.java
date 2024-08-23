@@ -25,7 +25,7 @@ public class TransactionManager {
 
     public void registerPendingPurchase(Product product)
                              throws FailedTransactionException {
-        if (hasOngoingTransaction() || this.currentTransaction.isFinalised()) {
+        if (!hasOngoingTransaction() || this.currentTransaction.isFinalised()) {
             throw new FailedTransactionException();
         }
         currentTransaction.getAssociatedCustomer().getCart().addProduct(product);

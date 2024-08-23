@@ -9,7 +9,7 @@ import farm.inventory.product.data.Quality;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BasicInventory implements inventory.Inventory {
+public class BasicInventory implements Inventory {
     private List<Product> products;
 
     public BasicInventory() {
@@ -20,6 +20,7 @@ public class BasicInventory implements inventory.Inventory {
     public void addProduct(Barcode barcode, Quality quality) {
         Product product = getProductByBarcode(barcode, quality);
         this.products.add(product);
+        System.out.println(this.products);
     }
 
     @Override
@@ -44,12 +45,15 @@ public class BasicInventory implements inventory.Inventory {
 
     @Override
     public List<Product> removeProduct(Barcode barcode) {
+        List<Product> productsToRemove = new ArrayList<>();
         for (Product product : this.products) {
             if (barcode.equals(product.getBarcode())) {
-                this.products.remove(product);
+                productsToRemove.add(product);
+                break;
             }
         }
-        return this.products;
+        this.products.removeAll(productsToRemove);
+        return productsToRemove;
     }
 
     @Override
@@ -65,6 +69,6 @@ public class BasicInventory implements inventory.Inventory {
             case WOOL -> new Wool(quality);
         };
     }
-
-
 }
+
+

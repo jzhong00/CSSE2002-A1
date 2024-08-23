@@ -1,4 +1,4 @@
-package inventory;
+package farm.inventory;
 
 import farm.core.FailedTransactionException;
 import farm.core.InvalidStockRequestException;
@@ -20,4 +20,5 @@ public interface Inventory {
     List<Product> removeProduct(Barcode barcode);
 
     List<Product> removeProduct(Barcode barcode, int quantity) throws FailedTransactionException;
+
 }

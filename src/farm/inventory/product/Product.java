@@ -10,6 +10,12 @@ public abstract class Product {
     protected Quality quality;
     protected int price;
 
+    protected Product(Barcode barcode, Quality quality, int price) {
+        this.barcode = barcode;
+        this.quality = quality;
+        this.price = price;
+    }
+
     public Barcode getBarcode() {
         return this.barcode;
     }

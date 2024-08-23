@@ -6,14 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cart {
-    public List<Product> items;
+    private List<Product> items;
 
     public Cart() {
         this.items = new ArrayList<>();
     }
 
     public void addProduct(Product product) {
-        System.out.println("Adding product " + product);
         this.items.add(product);
         System.out.println(this.items);
     }

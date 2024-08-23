@@ -48,18 +48,17 @@ public class Transaction {
         this.customer.getCart().setEmpty();
     }
 
-    @Override public String toString() {
-        String status = "Active";
-        if (this.finalised) {
-            status = "Finalised";
-        }
+    @Override
+    public String toString() {
+        String status = this.finalised ? "Finalised" : "Active";
         List<String> productDescriptions = new ArrayList<>();
 
         for (Product product : this.getPurchases()) {
             productDescriptions.add(product.toString());
         }
+
         return "Transaction {Customer: " + customer.toString().replaceFirst("Name: ", "")
-                + "Status: " + status + ", Associated Products: "+ productDescriptions + "}";
+                + ", Status: " + status + ", Associated Products: " + productDescriptions + "}";
     }
 
     public String getReceipt() {

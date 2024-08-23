@@ -163,7 +163,7 @@ public class ReceiptPrinter {
                             + numHeadings, entry.size())));
                 }
             }
-            
+
             for (List<String> line : lines) {
                 distribute(sb, colLengths, spacing, line);
             }

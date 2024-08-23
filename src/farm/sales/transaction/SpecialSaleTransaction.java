@@ -20,18 +20,26 @@ public class SpecialSaleTransaction extends CategorisedTransaction {
 
     public SpecialSaleTransaction(Customer customer, Map<Barcode, Integer> discounts) {
         super(customer);
+        System.out.println(discounts);
         this.discounts = new HashMap<>(discounts);
     }
 
     @Override
     public int getPurchaseSubtotal(Barcode type) {
         int subtotal = 0;
+        // Calculate subtotal for products matching the given barcode
         for (Product product : getPurchases()) {
-            if (product.getBarcode() == type) {
+            if (product.getBarcode().equals(type)) { // Use .equals() for object comparison
                 subtotal += product.getBasePrice();
             }
         }
-        return subtotal * (1 - getDiscountAmount(type));
+
+        // Retrieve discount amount as a percentage
+        int discountPercentage = getDiscountAmount(type);
+
+        // Calculate the discounted subtotal
+        double result = subtotal - ((discountPercentage * subtotal) / 100.0); // Convert percentage to a factor
+        return (int) (result); // Apply discount and cast to int
     }
 
     public int getDiscountAmount(Barcode type) {
@@ -43,7 +51,7 @@ public class SpecialSaleTransaction extends CategorisedTransaction {
     }
 
     public int getTotalSaved() {
-        int total = 0;
+        double total = 0.0;
 
         // Get purchased products
         Map<Barcode, List<Product>> purchases = getPurchasesByType();
@@ -55,12 +63,24 @@ public class SpecialSaleTransaction extends CategorisedTransaction {
 
             if (purchases.containsKey(barcode)) {
                 List<Product> products = purchases.get(barcode);
-                int quantity = getPurchaseQuantity(barcode);
+                int productTotal = 0;
+                for (Product product : products) {
+                    productTotal += product.getBasePrice();
+                }
 
-                total += discountAmount * quantity;
+                // Calculate the amount saved by applying the discount
+                double amountSaved = (productTotal * discountAmount) / 100.0;
+                total += amountSaved;
             }
         }
-        return total;
+        return (int) (total);
+    }
+
+    @Override
+    public int getTotal() {
+        int total = super.getTotal();
+        int saved = getTotalSaved();
+        return total - saved;
     }
 
     @Override
@@ -68,17 +88,12 @@ public class SpecialSaleTransaction extends CategorisedTransaction {
         List<Product> products = getPurchases();
         Customer customer = getAssociatedCustomer();
         String status = isFinalised() ? "Finalised" : "Active";
-        Map<Barcode, Integer> usedDiscounts = new HashMap<>();
-        for (Product product : products) {
-            if (discounts.containsKey(product.getBarcode())) {
-                usedDiscounts.put(product.getBarcode(), discounts.get(product.getBarcode()));
-            }
-        }
+        System.out.println(this.discounts);
 
         // Format string
-        return "Transaction {Customer: " + customer + ", Status: "
+        return "Transaction {Customer: " + customer.toString().replace("Name: ", "") + ", Status: "
                 + status + ", Associated Products: " + products
-                + ", Discounts: " + usedDiscounts + "}";
+                + ", Discounts: " + this.discounts + "}";
     }
 
     @Override
@@ -90,36 +105,36 @@ public class SpecialSaleTransaction extends CategorisedTransaction {
         List<String> headings = List.of("Item", "Qty", "Price (ea.)", "Subtotal");
         String customer = getAssociatedCustomer().getName();
 
-        List<List<String>> recieptEntries = new ArrayList<>();
+        List<List<String>> receiptEntries = new ArrayList<>();
         String totalCost = convertPrice(getTotal());
+        int totalSavedNum = getTotalSaved();
         String totalSaved = convertPrice(getTotalSaved());
 
         for (Barcode barcode : Barcode.values()) {
             int quantity = getPurchaseQuantity(barcode);
 
             if (quantity > 0) {
+                List<String> entry = new ArrayList<>();
+
                 int basePrice = barcode.getBasePrice();
                 int subtotal = getPurchaseSubtotal(barcode);
-                int discount = getDiscountAmount(barcode);
-                int savings = (quantity * basePrice) - subtotal;
 
-                List<String> entry = new ArrayList<>();
                 entry.add(barcode.getDisplayName());
                 entry.add(String.valueOf(quantity));
                 entry.add(convertPrice(basePrice));
                 entry.add(convertPrice(subtotal));
-
-                recieptEntries.add(entry);
-            }
-
-            if (discounts.containsKey(barcode)) {
-                List<String> entry = new ArrayList<>();
-                String message = "Discount applied! " + discounts.get(barcode) + "% off " + barcode.getDisplayName();
-                entry.add(message);
-                recieptEntries.add(entry);
+                if (discounts.containsKey(barcode) && discounts.get(barcode) > 0) {
+                    String message = "Discount applied! " + discounts.get(barcode) + "% off " + barcode.getDisplayName();
+                    entry.add(message);
+                }
+                receiptEntries.add(entry);
             }
         }
-        return ReceiptPrinter.createReceipt(headings, recieptEntries, totalCost, customer, totalSaved);
+        if (totalSavedNum > 0) {
+            return ReceiptPrinter.createReceipt(headings, receiptEntries, totalCost, customer, totalSaved);
+        } else {
+            return ReceiptPrinter.createReceipt(headings, receiptEntries, totalCost, customer);
+        }
 
     }
 }

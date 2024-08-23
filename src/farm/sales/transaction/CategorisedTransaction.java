@@ -14,7 +14,7 @@ public class CategorisedTransaction extends Transaction {
 
     public Set<Barcode> getPurchasedTypes() {
         Set<Barcode> barcodes = new HashSet<>();
-        for (Product purchase : purchases) {
+        for (Product purchase : getPurchases()) {
             barcodes.add(purchase.getBarcode());
         }
         return barcodes;
@@ -67,12 +67,12 @@ public class CategorisedTransaction extends Transaction {
         }
 
         // Set up headings and list of entries
-        List<String> headings = Arrays.asList("Item", "Qty", "Price (ea.)", "Subtotal");
         List<List<String>> entries = new ArrayList<>();
         String total = convertPrice(getTotal());
 
         // Get purchased products grouped by Barcode
         Map<Barcode, List<Product>> purchasesByType = getPurchasesByType();
+        System.out.println(purchasesByType);
 
         // Iterate over sorted barcodes to ensure correct order
         for (Barcode barcode : Barcode.values()) {
@@ -93,8 +93,7 @@ public class CategorisedTransaction extends Transaction {
         }
 
         // Add the total to the entries
-        List<String> totalEntry = Arrays.asList("", "", "", total);
-        entries.add(totalEntry);
+        List<String> headings = Arrays.asList("Item", "Qty", "Price (ea.)", "Subtotal");
 
         // Generate and return the receipt
         return ReceiptPrinter.createReceipt(headings, entries, total, customer.getName()).toString();

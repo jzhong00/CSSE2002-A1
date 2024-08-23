@@ -2,6 +2,8 @@ package farm.sales;
 
 import farm.inventory.product.Product;
 import farm.inventory.product.data.Barcode;
+import farm.sales.transaction.CategorisedTransaction;
+import farm.sales.transaction.SpecialSaleTransaction;
 import farm.sales.transaction.Transaction;
 
 import java.util.HashMap;
@@ -32,19 +34,33 @@ public class TransactionHistory {
     public int getGrossEarnings() {
         int total = 0;
         for (Transaction transaction : this.transactions) {
-            total += transaction.getTotal();
+            if (transaction instanceof SpecialSaleTransaction) {
+                total += (transaction.getTotal() - ((SpecialSaleTransaction) transaction).getTotalSaved());
+            } else {
+                total += transaction.getTotal();
+            }
         }
         return total;
     }
 
-//    public int getGrossEarnings(Barcode type) {
-//        int total = 0;
-//        for (Transaction transaction : this.transactions) {
-//            total += transaction.getPurchaseSubtotal();
-//            }
-//        }
-//        return total;
-//    }
+    public int getGrossEarnings(Barcode type) {
+        int total = 0;
+        for (Transaction transaction : this.transactions) {
+            if (transaction instanceof SpecialSaleTransaction) {
+                total += ((SpecialSaleTransaction) transaction).getPurchaseSubtotal(type);
+            } else if (transaction instanceof CategorisedTransaction) {
+                total += ((CategorisedTransaction) transaction).getPurchaseSubtotal(type);
+            } else {
+                for (Product product : transaction.getPurchases()) {
+                    if (product.getBarcode().equals(type)) {
+                        total += product.getBasePrice();
+                    }
+                }
+
+            }
+        }
+        return total;
+    }
 
     public int getTotalTransactionsMade() {
         return this.transactions.size();
@@ -58,7 +74,21 @@ public class TransactionHistory {
         return total;
     }
 
-//    public int getTotalProductsSold(Barcode type)
+    public int getTotalProductsSold(Barcode type) {
+        int total = 0;
+        for (Transaction transaction : this.transactions) {
+            if (transaction instanceof SpecialSaleTransaction || transaction instanceof CategorisedTransaction) {
+                total += ((CategorisedTransaction) transaction).getPurchaseQuantity(type);
+            } else {
+                for (Product product : transaction.getPurchases()) {
+                    if (product.getBarcode().equals(type)) {
+                        total++;
+                    }
+                }
+            }
+        }
+        return total;
+    }
 
     public Transaction getHighestGrossingTransaction() {
         Transaction highest = null;
@@ -105,10 +135,29 @@ public class TransactionHistory {
         for (Transaction transaction : this.transactions) {
             totalSpent += transaction.getTotal();
         }
+        if (numberOfTransactions == 0) {
+            return 0.0d;
+        }
         return (double) totalSpent / numberOfTransactions;
     }
 
-//    public double getAverageProductDiscount(Barcode type) {
-//
-//    }
+
+    public double getAverageProductDiscount(Barcode type) {
+
+        int totalDiscount = 0;
+        int totalNum = 0;
+        for (Transaction transaction : transactions) {
+            if (transaction instanceof SpecialSaleTransaction) {
+                totalNum++;
+                totalDiscount += ((SpecialSaleTransaction) transaction).getDiscountAmount(type);
+            }
+        }
+        // Return 0.0 if no products were sold
+        if (totalNum == 0) {
+            return 0.0d;
+        }
+
+        // Cast to double for accurate division
+        return (double) totalDiscount / totalNum;
+    }
 }

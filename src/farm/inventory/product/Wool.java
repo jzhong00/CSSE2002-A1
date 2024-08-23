@@ -4,18 +4,12 @@ import farm.inventory.product.data.Barcode;
 import farm.inventory.product.data.Quality;
 
 public class Wool extends Product {
-    private final String name;
 
     public Wool() {
-        this.barcode = Barcode.WOOL;
-        this.price = Barcode.WOOL.getBasePrice();
-        this.name = Barcode.WOOL.getDisplayName();
-        this.quality = Quality.REGULAR;
+        super(Barcode.WOOL, Quality.REGULAR, Barcode.WOOL.getBasePrice());
     }
+
     public Wool(Quality quality) {
-        this.barcode = Barcode.WOOL;
-        this.price = Barcode.WOOL.getBasePrice();
-        this.name = Barcode.WOOL.getDisplayName();
-        this.quality = quality;
+        super(Barcode.WOOL, quality, Barcode.WOOL.getBasePrice());
     }
 }

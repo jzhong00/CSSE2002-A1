@@ -4,19 +4,12 @@ import farm.inventory.product.data.Barcode;
 import farm.inventory.product.data.Quality;
 
 public class Egg extends Product {
-    private final String name;
 
     public Egg() {
-        this.barcode = Barcode.EGG;
-        this.price = Barcode.EGG.getBasePrice();
-        this.name = Barcode.EGG.getDisplayName();
-        this.quality = Quality.REGULAR;
+        super(Barcode.EGG, Quality.REGULAR, Barcode.EGG.getBasePrice());
     }
 
     public Egg(Quality quality) {
-        this.barcode = Barcode.EGG;
-        this.price = Barcode.EGG.getBasePrice();
-        this.name = Barcode.EGG.getDisplayName();
-        this.quality = quality;
+        super(Barcode.EGG, quality, Barcode.EGG.getBasePrice());
     }
 }
