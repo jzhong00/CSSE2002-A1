@@ -34,11 +34,8 @@ public class TransactionHistory {
     public int getGrossEarnings() {
         int total = 0;
         for (Transaction transaction : this.transactions) {
-            if (transaction instanceof SpecialSaleTransaction) {
-                total += (transaction.getTotal() - ((SpecialSaleTransaction) transaction).getTotalSaved());
-            } else {
-                total += transaction.getTotal();
-            }
+            System.out.println(transaction.getAssociatedCustomer().getName());
+            total += transaction.getTotal();
         }
         return total;
     }

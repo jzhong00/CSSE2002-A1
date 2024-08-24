@@ -20,26 +20,27 @@ public class SpecialSaleTransaction extends CategorisedTransaction {
 
     public SpecialSaleTransaction(Customer customer, Map<Barcode, Integer> discounts) {
         super(customer);
-        System.out.println(discounts);
         this.discounts = new HashMap<>(discounts);
     }
 
     @Override
     public int getPurchaseSubtotal(Barcode type) {
-        int subtotal = 0;
+        double subtotal = 0.0;
         // Calculate subtotal for products matching the given barcode
         for (Product product : getPurchases()) {
             if (product.getBarcode().equals(type)) { // Use .equals() for object comparison
                 subtotal += product.getBasePrice();
             }
         }
+        System.out.println(subtotal);
 
         // Retrieve discount amount as a percentage
         int discountPercentage = getDiscountAmount(type);
 
         // Calculate the discounted subtotal
         double result = subtotal - ((discountPercentage * subtotal) / 100.0); // Convert percentage to a factor
-        return (int) (result); // Apply discount and cast to int
+        System.out.println(result);
+        return (int) (Math.round(result)); // Apply discount and cast to int
     }
 
     public int getDiscountAmount(Barcode type) {
@@ -118,6 +119,7 @@ public class SpecialSaleTransaction extends CategorisedTransaction {
 
                 int basePrice = barcode.getBasePrice();
                 int subtotal = getPurchaseSubtotal(barcode);
+                System.out.println(subtotal);
 
                 entry.add(barcode.getDisplayName());
                 entry.add(String.valueOf(quantity));

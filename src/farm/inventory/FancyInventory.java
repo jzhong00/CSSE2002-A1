@@ -22,7 +22,6 @@ public class FancyInventory implements Inventory {
     public void addProduct(Barcode barcode, Quality quality) {
         Product product = getProductByBarcode(barcode, quality);
         this.products.add(product);
-        System.out.println(this.products);
     }
 
     @Override

@@ -109,7 +109,7 @@ public class Farm {
             throw new IllegalArgumentException("Quantity must be at least 1.");
         } else if (quantity > 1 && !(inventory instanceof FancyInventory)) {
             // Adding more than one item at a time cannot be done with a BasicInventory.
-            throw new InvalidStockRequestException();
+            throw new InvalidStockRequestException("Current inventory is not fancy enough. Please supply products one at a time.");
         }
 
         this.inventory.addProduct(barcode, quality, quantity);

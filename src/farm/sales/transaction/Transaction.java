@@ -63,7 +63,6 @@ public class Transaction {
 
     public String getReceipt() {
         List<String> headings = new ArrayList<>();
-        String total = convertPrice(this.getTotal());
 
         headings.add("Item");
         headings.add("Price");
@@ -71,6 +70,7 @@ public class Transaction {
             return ReceiptPrinter.createActiveReceipt();
         }
 
+        String total = convertPrice(this.getTotal());
         List<List<String>> entries = new ArrayList<>();
         for (Product product : this.purchases) {
             List<String> entry = new ArrayList<>();

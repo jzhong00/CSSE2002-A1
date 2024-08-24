@@ -14,7 +14,6 @@ public class Cart {
 
     public void addProduct(Product product) {
         this.items.add(product);
-        System.out.println(this.items);
     }
 
     public List<Product> getContents() {

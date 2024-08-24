@@ -95,16 +95,11 @@ public class FarmManager {
         try {
             // Add the product to the inventory with regular quality.
             Barcode barcode = getBarcode(productName);
-            farm.addToCart(barcode, 1);
+            farm.stockProduct(barcode, Quality.REGULAR);
             // If the product is added successfully.
             shop.displayProductAddSuccess();
         } catch (Exception e) {
-            if (e instanceof FailedTransactionException) {
-                shop.displayProductAddFailed(e.getMessage().replace("purchase", "supply"));
-            } else {
-                // Handle any exceptions that occur during the addition process.
-                shop.displayProductAddFailed(e.getMessage());
-            }
+            shop.displayProductAddFailed(e.getMessage());
         }
     }
 
@@ -127,16 +122,12 @@ public class FarmManager {
         try {
             // Add the specified quantity of the product to cart.
             Barcode barcode = getBarcode(productName);
-            farm.addToCart(barcode, quantity);
+            farm.stockProduct(barcode, Quality.REGULAR, quantity);
             // If the product is added successfully
             shop.displayProductAddSuccess();
         } catch (Exception e) {
-            if (e instanceof FailedTransactionException) {
-                shop.displayProductAddFailed(e.getMessage().replace("purchase", "supply"));
-            } else {
-                // Handle any exceptions that occur during the addition process.
-                shop.displayProductAddFailed(e.getMessage());
-            }
+            // Handle any exceptions that occur during the addition process.
+            shop.displayProductAddFailed(e.getMessage());
         }
     }
 
@@ -148,7 +139,7 @@ public class FarmManager {
     private Boolean checkProductName(String productName) {
         List<String> validProducts = List.of("egg", "milk", "jam", "wool");
         // Check if the product name is valid
-        return !validProducts.contains(productName);
+        return validProducts.contains(productName);
     }
 
     /**

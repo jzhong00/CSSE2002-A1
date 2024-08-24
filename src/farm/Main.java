@@ -14,7 +14,10 @@ import farm.inventory.Inventory;
 import farm.inventory.product.Egg;
 import farm.inventory.product.Jam;
 import farm.inventory.product.Milk;
+import farm.inventory.product.Wool;
 import farm.inventory.product.data.Barcode;
+import farm.inventory.product.data.Quality;
+import farm.sales.TransactionHistory;
 import farm.sales.transaction.SpecialSaleTransaction;
 import farm.sales.transaction.Transaction;
 import farm.core.FarmManager;
@@ -31,22 +34,12 @@ public class Main {
      * @param args Parameters to the program, currently not supported.
      */
     public static void main(String[] args) throws DuplicateCustomerException {
-        Customer jack = new Customer("Jack", 01234567, "1st Street");
+        Inventory inventory = new BasicInventory();  // Create a new Inventory instance
+        AddressBook addressBook = new AddressBook();  // Create a new AddressBook instance
+        Farm farm = new Farm(inventory, addressBook);  // Pass Inventory and AddressBook to the Farm constructor
+        ShopFront shopFront = new ShopFront();  // Create a new ShopFront instance
 
-        jack.getCart().addProduct(new Egg());
-        jack.getCart().addProduct(new Milk());
-        jack.getCart().addProduct(new Jam());
-        jack.getCart().addProduct(new Egg());
-        jack.getCart().addProduct(new Milk());
-        jack.getCart().addProduct(new Egg());
-
-        Map<Barcode, Integer> discounts = new HashMap<>();
-        discounts.put(Barcode.MILK, 50);
-        discounts.put(Barcode.JAM, 0);
-
-        Transaction transaction = new SpecialSaleTransaction(jack, discounts);
-        transaction.finalise();
-
-        System.out.println(transaction.getReceipt());
+        FarmManager manager = new FarmManager(farm, shopFront);  // Pass Farm and ShopFront to the FarmManager constructor
+        manager.run();  // Run the FarmManager
     }
 }
