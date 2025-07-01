@@ -3,7 +3,6 @@ package farm.core;
 import farm.customer.AddressBook;
 import farm.customer.Customer;
 import farm.inventory.BasicInventory;
-import farm.inventory.FancyInventory;
 import farm.inventory.Inventory;
 import farm.inventory.product.Product;
 import farm.inventory.product.data.Barcode;
@@ -96,7 +95,8 @@ public class Farm {
      * @param barcode The barcode of the product.
      * @param quality The product's quality.
      * @param quantity The number of products to add into the inventory.
-     * @throws InvalidStockRequestException If the quantity is greater than one, a FancyInventory is not in use.
+     * @throws InvalidStockRequestException If the quantity is greater than one,
+     *                                      a FancyInventory is not in use.
      * @throws IllegalArgumentException If the quantity is less than one.
      */
     public void stockProduct(Barcode barcode,
@@ -107,9 +107,6 @@ public class Farm {
         if (quantity <= 0) {
             // Must add at least one item.
             throw new IllegalArgumentException("Quantity must be at least 1.");
-        } else if (quantity > 1 && !(inventory instanceof FancyInventory)) {
-            // Adding more than one item at a time cannot be done with a BasicInventory.
-            throw new InvalidStockRequestException("Current inventory is not fancy enough. Please supply products one at a time.");
         }
 
         this.inventory.addProduct(barcode, quality, quantity);
@@ -137,7 +134,9 @@ public class Farm {
 
         // Ensure there is a currently ongoing transaction.
         if (!transactionManager.hasOngoingTransaction()) {
-            throw new FailedTransactionException("Cannot add to cart when no customer has started shopping.");
+            throw new FailedTransactionException(
+                    "Cannot add to cart when no customer has started shopping."
+            );
         }
 
         // Get all products currently in the farm's inventory.
@@ -156,12 +155,15 @@ public class Farm {
     }
 
     /**
-     * Attempts to add the specified number of products of the given type to the customer's shopping cart.
+     * Attempts to add the specified number of products of
+     * the given type to the customer's shopping cart.
+     *
      * @param barcode The barcode of the product to be added.
      * @param quantity The number of products to add.
      * @return The number of products successfully added.
      * @throws FailedTransactionException If there is no currently ongoing transaction,
-     *                                    or if the quantity is greater than one when not using a FancyInventory.
+     *                                    or if the quantity is greater than one when
+     *                                    not using a FancyInventory.
      * @throws IllegalArgumentException If the argument less than 1.
      */
     public int addToCart(Barcode barcode, int quantity)
@@ -171,11 +173,16 @@ public class Farm {
             // The quantity is negative or zero.
             throw new IllegalArgumentException("Quantity must be at least 1.");
         } else if (quantity > 1 && (inventory instanceof BasicInventory)) {
-            // The inventory is basic and the customer is attempting to buy multiple products in one transaction.
-            throw new FailedTransactionException("Current inventory is not fancy enough. Please purchase products one at a time.");
+            // The inventory is basic and the customer is attempting to
+            // buy multiple products in one transaction.
+            throw new FailedTransactionException(
+                    "Current inventory is not fancy enough. Please purchase products one at a time."
+            );
         } else if  (!transactionManager.hasOngoingTransaction()) {
             // There is no currently existing transaction.
-            throw new FailedTransactionException("Cannot add to cart when no customer has started shopping.");
+            throw new FailedTransactionException(
+                    "Cannot add to cart when no customer has started shopping."
+            );
         }
 
         int numAdded = 0;

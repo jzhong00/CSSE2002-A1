@@ -111,7 +111,7 @@ public class FarmManager {
      * @param productName the name of the product to add to the farm.
      * @param quantity the amount of the product to add.
      */
-    protected void addToInventory(String productName, int quantity) { // Define valid product names
+    protected void addToInventory(String productName, int quantity) {
 
         // Ensure a valid product was specified.
         if (!checkProductName(productName)) {
@@ -126,7 +126,6 @@ public class FarmManager {
             // If the product is added successfully
             shop.displayProductAddSuccess();
         } catch (Exception e) {
-            // Handle any exceptions that occur during the addition process.
             shop.displayProductAddFailed(e.getMessage());
         }
     }
@@ -137,9 +136,12 @@ public class FarmManager {
      * @return Whether the product exists or not.
      */
     private Boolean checkProductName(String productName) {
-        List<String> validProducts = List.of("egg", "milk", "jam", "wool");
-        // Check if the product name is valid
-        return validProducts.contains(productName);
+        for (Barcode barcode : Barcode.values()) {
+            if (barcode.getDisplayName().equals(productName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -222,7 +224,7 @@ public class FarmManager {
 
         // Set this transaction as currently ongoing.
         try {
-            farm.getTransactionManager().setOngoingTransaction(transaction);
+            farm.startTransaction(transaction);
         } catch (FailedTransactionException e) {
             shop.displayFailedToCreateTransaction();
         }

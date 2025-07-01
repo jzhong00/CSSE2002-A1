@@ -11,9 +11,17 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class FancyInventory implements Inventory {
-    List<Product> products;
 
+/**
+ * A fancy inventory which stores products in stacks, enabling quantity information.
+ */
+public class FancyInventory implements Inventory {
+    private List<Product> products;
+
+
+    /**
+     * A constructor for the FancyInventory.
+     */
     public FancyInventory() {
         this.products = new ArrayList<>();
     }
@@ -25,7 +33,8 @@ public class FancyInventory implements Inventory {
     }
 
     @Override
-    public void addProduct(Barcode barcode, Quality quality, int quantity) throws InvalidStockRequestException {
+    public void addProduct(Barcode barcode, Quality quality, int quantity)
+            throws InvalidStockRequestException {
         Product product = getProductByBarcode(barcode, quality);
         for (int i = 0; i < quantity; i++) {
             this.products.add(product);
@@ -46,7 +55,7 @@ public class FancyInventory implements Inventory {
     public List<Product> getAllProducts() {
         List<Product> organisedProducts = new ArrayList<>();
 
-        // Iterate over all barcode values in order
+        // Iterate over all barcode values in order of quality as defined in Barcode.
         for (Barcode barcode : Barcode.values()) {
             for (Product product : this.products) {
                 if (barcode.equals(product.getBarcode())) {
@@ -61,6 +70,7 @@ public class FancyInventory implements Inventory {
     public List<Product> removeProduct(Barcode barcode) {
         List<Product> productsToRemove = new ArrayList<>();
 
+        // Sort the products in descending quality.
         this.products.sort(Comparator.comparing(Product::getQuality).reversed());
 
         for (Product product : this.products) {
@@ -74,30 +84,40 @@ public class FancyInventory implements Inventory {
     }
 
     @Override
-    public List<Product> removeProduct(Barcode barcode, int quantity) throws FailedTransactionException {
+    public List<Product> removeProduct(Barcode barcode, int quantity)
+            throws FailedTransactionException {
         List<Product> removedProduct = new ArrayList<>();
         List<Product> availableProducts = new ArrayList<>();
+
+        // Add all products of the desired type to a list.
         for (Product product : this.products) {
             if (barcode.equals(product.getBarcode())) {
                 availableProducts.add(product);
             }
         }
-        System.out.println(availableProducts);
 
+        // If the customer has requested more or equal to the amount of stock available.
         if (availableProducts.size() <= quantity) {
             removedProduct.addAll(availableProducts);
         } else {
-            // Remove items with the highest quality
+            // Sort and remove items with the highest quality.
             availableProducts.sort(Comparator.comparing(Product::getQuality).reversed());
             for (int i = 0; i < quantity; i++) {
                 Product product = availableProducts.get(i);
                 removedProduct.add(product);
             }
         }
+
+        // Remove the items and return the removed items.
         this.products.removeAll(removedProduct);
         return removedProduct;
     }
 
+    /**
+     * Get the quantity of a specific product in the inventory.
+     * @param barcode The barcode of the product.
+     * @return The amount of the corresponding product currently in the inventory.
+     */
     public int getStockedQuantity(Barcode barcode) {
         int quantity = 0;
         for (Product product : this.products) {
@@ -108,6 +128,12 @@ public class FancyInventory implements Inventory {
         return quantity;
     }
 
+    /**
+     * Helper function that returns the product based on its barcode and quality.
+     * @param barcode The product's barcode.
+     * @param quality The product's quality.
+     * @return The product instance.
+     */
     private Product getProductByBarcode(Barcode barcode, Quality quality) {
         return switch (barcode) {
             case EGG -> new Egg(quality);

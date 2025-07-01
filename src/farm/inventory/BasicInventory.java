@@ -9,9 +9,17 @@ import farm.inventory.product.data.Quality;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * A very basic inventory that both stores and handles products individually.
+ * Only supports operation on single Products at a time.
+ */
 public class BasicInventory implements Inventory {
     private List<Product> products;
 
+    /**
+     * A constructor for the BasicInventory.
+     */
     public BasicInventory() {
         this.products = new ArrayList<>();
     }
@@ -23,8 +31,12 @@ public class BasicInventory implements Inventory {
     }
 
     @Override
-    public void addProduct(Barcode barcode, Quality quality, int quantity) throws InvalidStockRequestException {
-        throw new InvalidStockRequestException("Current inventory is not fancy enough. Please supply products one at a time.");
+    public void addProduct(Barcode barcode, Quality quality, int quantity)
+            throws InvalidStockRequestException {
+
+        throw new InvalidStockRequestException(
+                "Current inventory is not fancy enough. Please supply products one at a time."
+        );
     }
 
     @Override
@@ -56,10 +68,20 @@ public class BasicInventory implements Inventory {
     }
 
     @Override
-    public List<Product> removeProduct(Barcode barcode, int quantity) throws FailedTransactionException {
-        throw new FailedTransactionException("Current inventory is not fancy enough. Please purchase products one at a time.");
+    public List<Product> removeProduct(Barcode barcode, int quantity)
+            throws FailedTransactionException {
+
+        throw new FailedTransactionException(
+                "Current inventory is not fancy enough. Please purchase products one at a time."
+        );
     }
 
+    /**
+     * Helper function that returns the product based on its barcode and quality.
+     * @param barcode The product's barcode.
+     * @param quality The product's quality.
+     * @return The product instance.
+     */
     private Product getProductByBarcode(Barcode barcode, Quality quality) {
         return switch (barcode) {
             case EGG -> new Egg(quality);
